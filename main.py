@@ -12,7 +12,7 @@ def get_database_instance(db_name):
     """
     switcher={
         "sql":SQL(),
-        #"mongodb":MongoDB(),
+        "mongodb":MongoDB(),
         #"redis":Redis(),
         #"hbase":HBase()
     }
@@ -28,7 +28,7 @@ def write_test(db_instance):
     """
 
     data = DroneData()
-    amount_records = 5000
+    amount_records = 2000
     print("The amount of records in the before test database is: " + str(db_instance.count_records()))
     print("Starting write test for " + str(amount_records) + " records")
 
@@ -43,6 +43,7 @@ def write_test(db_instance):
 
     print("Query runtime: " + str(duration) + "ms")
     print("The amount of records in the database is now: " + str(db_instance.count_records()))
+
     return
 
 
@@ -83,7 +84,7 @@ def main():
         print("Unknown database type: " + database_type)
         exit(1)
 
-    db_instance.connect("192.168.48.133", "3306", "paris")
+    db_instance.connect("192.168.48.133", "paris")
 
     if test_type == "write":
         write_test(db_instance)

@@ -1,6 +1,10 @@
 import abc
+import datetime
 import mysql.connector as mariadb
+from pymongo import MongoClient
+from bson import DBRef
 from DroneData import *
+
 
 class Database(object):
     """
@@ -10,11 +14,10 @@ class Database(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def connect(self, ipv4, port, database_name):
+    def connect(self, ipv4, database_name):
         """
         Abstracte methode om verbinding te maken met de database
         :param ipv4: IP adres van de host van de database
-        :param port: port nummer waarop de database luistert
         :param database_name: de naam van de database (zoals top2000db, gameparadise, etc)
         :return: Niks
         """
@@ -60,8 +63,8 @@ class SQL(Database):
         self.connection = None
         self.cursor = None
 
-    def connect(self, ipv4, port, database_name):
-        self.connection = mariadb.connect(host=ipv4, port=port, user='root', password='test123',
+    def connect(self, ipv4, database_name):
+        self.connection = mariadb.connect(host=ipv4, port=3306, user='root', password='test123',
                                           database=database_name)
         self.cursor = self.connection.cursor()
 
@@ -88,3 +91,38 @@ class SQL(Database):
     def count_records(self):
         self.cursor.execute("select count(*) from UITVOERING")
         return self.cursor.fetchone()[0]
+
+
+class MongoDB(Database):
+
+    def __init__(self):
+        self.client = None
+        self.db = None
+        self.uitvoering_col = None
+
+    def connect(self, ipv4, database_name):
+        self.client = MongoClient(ipv4, 27017)
+        self.db = self.client[database_name]
+        self.uitvoering_col = self.db["uitvoering"]
+
+    def write(self, drone_update):
+        new_entry = {
+            "tijd": datetime.datetime.utcnow(),
+            "drone_id": DBRef("drone", str(drone_update.drone_id)),
+            "drone_lat": drone_update.drone_lat,
+            "drone_long": drone_update.drone_long,
+            "batterij_duur": drone_update.batterij_duur
+        }
+        self.uitvoering_col.insert_one(new_entry)
+        return
+
+    def read(self, aantal_records):
+        return self.uitvoering_col.find().limit(aantal_records)
+
+    def empty(self):
+        self.uitvoering_col.drop()
+        return
+
+    def count_records(self):
+        return self.uitvoering_col.count()
+
