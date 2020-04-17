@@ -10,11 +10,11 @@ def get_database_instance(db_name):
     :param db_name: de naam van het type database
     :return: het database object, of None als het type database niet bestaat.
     """
-    switcher={
-        "sql":SQL(),
-        "mongodb":MongoDB(),
-        #"redis":Redis(),
-        #"hbase":HBase()
+    switcher = {
+        "sql": SQL(),
+        "mongodb": MongoDB(),
+        "redis": Redis(),
+        # "hbase":HBase()
     }
     return switcher.get(db_name, None)
 
@@ -28,21 +28,22 @@ def write_test(db_instance):
     """
 
     data = DroneData()
-    amount_records = 2000
-    print("The amount of records in the before test database is: " + str(db_instance.count_records()))
+    amount_records = 10
+    print("The amount of records in the before test database is: " +
+          str(db_instance.count_records()))
     print("Starting write test for " + str(amount_records) + " records")
 
     start_time = int(round(time.time() * 1000))
 
     for i in range(0, amount_records):
         data.new_update()
-        db_instance.write(data)
+        db_instance.write(data, i)
 
     end_time = int(round(time.time() * 1000))
     duration = end_time - start_time
-
     print("Query runtime: " + str(duration) + "ms")
-    print("The amount of records in the database is now: " + str(db_instance.count_records()))
+    print("The amount of records in the database is now: " +
+          str(db_instance.count_records()))
 
     return
 
@@ -84,7 +85,7 @@ def main():
         print("Unknown database type: " + database_type)
         exit(1)
 
-    db_instance.connect("192.168.48.133", "paris")
+    db_instance.connect("127.0.0.1", "db0")
 
     if test_type == "write":
         write_test(db_instance)

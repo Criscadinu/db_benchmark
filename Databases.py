@@ -4,6 +4,7 @@ import mysql.connector as mariadb
 from pymongo import MongoClient
 from bson import DBRef
 from DroneData import *
+import redis
 
 
 class Database(object):
@@ -24,7 +25,7 @@ class Database(object):
         return
 
     @abc.abstractmethod
-    def write(self, drone_update):
+    def write(self, drone_update, id):
         """
         Abstracte methode om een nieuwe drone update naar te database te schrijven.
         :param drone_update: datastructuur waarin de data van de drone update zit
@@ -81,7 +82,8 @@ class SQL(Database):
         return
 
     def read(self, aantal_records):
-        self.cursor.execute("select * from UITVOERING LIMIT " + str(aantal_records))
+        self.cursor.execute(
+            "select * from UITVOERING LIMIT " + str(aantal_records))
         return self.cursor
 
     def empty(self):
@@ -126,3 +128,21 @@ class MongoDB(Database):
     def count_records(self):
         return self.uitvoering_col.count()
 
+
+class Redis(Database):
+    def __init__(self):
+        self.connection = None
+
+    def connect(self, ipv4, database_name):
+        self.connection = redis.Redis(host=ipv4, port=6379, db=0)
+
+    def write(self, drone_update, id):
+        uitvoering = {
+            "tijd": str(datetime.datetime.utcnow()),
+            "drone_id": "drone" + str(drone_update.drone_id),
+            "drone_lat": drone_update.drone_lat,
+            "drone_long": drone_update.drone_long,
+            "batterij_duur": drone_update.batterij_duur
+        }
+        self.connection.hmset("uitvoering"+str(id), uitvoering)
+        return

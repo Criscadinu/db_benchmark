@@ -1,0 +1,49 @@
+{
+  "redis_data": [
+    {
+      "coanaam": "Test",
+      "eenheidsNaam": "robotica en autonome systemen",
+      "scenarioLattitiude": 0.0,
+      "scenarioLongitude": 0.0,
+      "commandantNaam": "Pieter",
+      "startTijd": 0
+    },
+
+    { "type": "DJI" },
+
+    {
+      "drone": 0,
+      "coa": 0,
+      "startPositieLattitude": 0.0,
+      "startPositieLongitude": 0.0,
+      "hoofdvak": 0
+    },
+
+    {
+      "coa": 0,
+      "hoofdvakLattitude": 0.0,
+      "hoofdvakLongitude": 0.0,
+      "hoofdvaktitel": "Zulu",
+      "risicoNiveau": 1,
+      "modus": "screen"
+    },
+
+    {
+      "hoofdvak": 0,
+      "focusvakLattitude": 0.0,
+      "focusvakLongitude": 0.0,
+      "focusvakTitel": "Zulu",
+      "risicoNiveau": 1
+    },
+
+    {
+      "drone": 0,
+      "coa": 0,
+      "droneLattitude": 0.0,
+      "droneLongitude": 0.0,
+      "hdBeeldPath": "10.323.31.45/hdimages/",
+      "warmteBeeldPath": "10.323.31.45/warmtebeeld/",
+      "batterijduur": 8
+    }
+  ]
+}
