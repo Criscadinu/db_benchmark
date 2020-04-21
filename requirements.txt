@@ -1,3 +1,4 @@
 redis
 mysql-connector-python
 pymongo
+happybase

@@ -14,7 +14,7 @@ def get_database_instance(db_name):
         "sql": SQL(),
         "mongodb": MongoDB(),
         "redis": Redis(),
-        # "hbase":HBase()
+        "hbase": Happybase(),
     }
     return switcher.get(db_name, None)
 
