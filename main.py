@@ -30,21 +30,17 @@ def write_test(db_instance, n_records):
 
     data = DroneData()
 
-    # The different tests with te number of writes to the database
-
-    n_of_writes_reads = int(n_records)
-
     # Number of threads
 
     n_of_threads = 10
 
     print("The amount of records in the before test database is: " +
           str(db_instance.count_records()))
-    print("Starting write test for " + str(n_of_writes_reads) + " records")
+    print("Starting write test for " + str(n_records) + " records")
 
     start_time = int(round(time.time() * 1000))
 
-    for i in range(0, n_of_writes_reads):
+    for i in range(0, int(n_records)):
         data.new_update()
         db_instance.write(data, i)
 
