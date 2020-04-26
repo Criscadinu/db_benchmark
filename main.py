@@ -1,5 +1,6 @@
 from Databases import *
 from DroneData import *
+import threading
 import time
 import sys
 
@@ -19,7 +20,7 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def write_test(db_instance):
+def write_test(db_instance, n_records):
     """
     Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
 
@@ -28,14 +29,22 @@ def write_test(db_instance):
     """
 
     data = DroneData()
-    amount_records = 10
+
+    # The different tests with te number of writes to the database
+
+    n_of_writes_reads = int(n_records)
+
+    # Number of threads
+
+    n_of_threads = 10
+
     print("The amount of records in the before test database is: " +
           str(db_instance.count_records()))
-    print("Starting write test for " + str(amount_records) + " records")
+    print("Starting write test for " + str(n_of_writes_reads) + " records")
 
     start_time = int(round(time.time() * 1000))
 
-    for i in range(0, amount_records):
+    for i in range(0, n_of_writes_reads):
         data.new_update()
         db_instance.write(data, i)
 
@@ -73,12 +82,13 @@ def main():
     :return: niks
     """
 
-    if len(sys.argv) is not 3:
-        print("Must specify database name and test type: <database> <type>")
+    if len(sys.argv) is not 4:
+        print("Must specify database name, test type and number of records: <database> <type> <integer>")
         exit(1)
 
     database_type = sys.argv[1]
     test_type = sys.argv[2]
+    n_records = sys.argv[3]
 
     db_instance = get_database_instance(database_type)
     if db_instance is None:
@@ -88,7 +98,7 @@ def main():
     db_instance.connect("127.0.0.1", "db0")
 
     if test_type == "write":
-        write_test(db_instance)
+        write_test(db_instance, n_records)
     elif test_type == "read":
         read_test(db_instance)
     else:
