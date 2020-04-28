@@ -1,8 +1,10 @@
 from Databases import *
 from DroneData import *
+import concurrent.futures
 import threading
 import time
 import sys
+import logging
 
 
 def get_database_instance(db_name):
@@ -20,7 +22,7 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def write_test(db_instance, n_records):
+def write_test(db_instance, n_records, index, n_threads):
     """
     Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
 
@@ -30,9 +32,7 @@ def write_test(db_instance, n_records):
 
     data = DroneData()
 
-    # Number of threads
-
-    n_of_threads = 10
+    multiplier = index * (int(n_records) / int(n_threads))
 
     print("The amount of records in the before test database is: " +
           str(db_instance.count_records()))
@@ -40,9 +40,9 @@ def write_test(db_instance, n_records):
 
     start_time = int(round(time.time() * 1000))
 
-    for i in range(0, int(n_records)):
+    for i in range(0, int(int(n_records) / int(n_threads))):
         data.new_update()
-        db_instance.write(data, i)
+        db_instance.write(data, i + int(multiplier))
 
     end_time = int(round(time.time() * 1000))
     duration = end_time - start_time
@@ -78,13 +78,14 @@ def main():
     :return: niks
     """
 
-    if len(sys.argv) is not 4:
+    if len(sys.argv) is not 5:
         print("Must specify database name, test type and number of records: <database> <type> <integer>")
         exit(1)
 
     database_type = sys.argv[1]
     test_type = sys.argv[2]
     n_records = sys.argv[3]
+    n_threads = sys.argv[4]
 
     db_instance = get_database_instance(database_type)
     if db_instance is None:
@@ -94,7 +95,12 @@ def main():
     db_instance.connect("127.0.0.1", "db0")
 
     if test_type == "write":
-        write_test(db_instance, n_records)
+        # write_test(db_instance, n_records)
+        for index in range(int(n_threads)):
+            logging.info("Main    : create and start thread %d.", index)
+            x = threading.Thread(target=write_test, args=(
+                db_instance, n_records, index, n_threads))
+            x.start()
     elif test_type == "read":
         read_test(db_instance)
     else:

@@ -144,8 +144,9 @@ class Redis(Database):
             "drone_long": drone_update.drone_long,
             "batterij_duur": drone_update.batterij_duur
         }
-        self.connection.hmset("uitvoering"+str(id), uitvoering)
+        self.connection.hmset("uitvoering" + ' ' + str(id), uitvoering)
         return
+
 
 class Happybase(Database):
     def __init__(self):
@@ -153,14 +154,15 @@ class Happybase(Database):
         self.backlog_upper_bound_ = 20
 
     def connection(self):
-        conn = happybase.Connection(host = host)
+        conn = happybase.Connection(host=host)
         conn.open()
         return conn
 
     def write(self, drone_update):
         self.table = connection.table('PARIS')
         self.batch = table.batch()
-        self.batch.put(datetime.datetime, {'drone:id':  drone_update.drone_id, 'drone_lat': drone_update.drone_lat, 'drone_long': drone_update.drone_long,'batterij_duur': drone_update.batterij_duur})
+        self.batch.put(datetime.datetime, {'drone:id':  drone_update.drone_id, 'drone_lat': drone_update.drone_lat,
+                                           'drone_long': drone_update.drone_long, 'batterij_duur': drone_update.batterij_duur})
         self.batch.delete(b'row-key-4')
         self.batch.send()
         return
