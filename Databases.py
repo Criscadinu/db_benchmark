@@ -147,6 +147,12 @@ class Redis(Database):
         self.connection.hmset("uitvoering" + ' ' + str(id), uitvoering)
         return
 
+    def empty(self):
+        self.connection.flushall()
+
+    def count_records(self):
+        return self.connection.dbsize()
+
 
 class Happybase(Database):
     def __init__(self):
