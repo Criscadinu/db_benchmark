@@ -109,7 +109,7 @@ def main():
             duration = end_time - start_time
             print("Total write time of test case number " +
                   str(test_case) + ': ' + str(duration) + "ms")
-            # db_instance.empty()
+            db_instance.empty()
             write_result(database_type, n_records, duration)
 
     elif test_type == "read":
