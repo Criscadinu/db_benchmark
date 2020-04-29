@@ -107,7 +107,7 @@ class MongoDB(Database):
         self.db = self.client[database_name]
         self.uitvoering_col = self.db["uitvoering"]
 
-    def write(self, drone_update):
+    def write(self, drone_update, id):
         new_entry = {
             "tijd": datetime.datetime.utcnow(),
             "drone_id": DBRef("drone", str(drone_update.drone_id)),
