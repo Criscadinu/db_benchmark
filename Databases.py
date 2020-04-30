@@ -136,7 +136,7 @@ class Redis(Database):
     def connect(self, ipv4, database_name):
         self.connection = redis.Redis(host=ipv4, port=6379, db=0)
 
-    def write(self, drone_update, id):
+    def write(self, drone_update):
         uitvoering = {
             "tijd": str(datetime.datetime.utcnow()),
             "drone_id": "drone" + str(drone_update.drone_id),
@@ -144,7 +144,8 @@ class Redis(Database):
             "drone_long": drone_update.drone_long,
             "batterij_duur": drone_update.batterij_duur
         }
-        self.connection.hmset("uitvoering" + ' ' + str(id), uitvoering)
+        self.connection.hmset(
+            "uitvoering" + uitvoering.get("tijd"), uitvoering)
         return
 
     def empty(self):

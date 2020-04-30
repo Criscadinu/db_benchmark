@@ -22,7 +22,7 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def write_test(db_instance, n_records, index, n_threads):
+def write_test(db_instance, n_records, n_threads, start_time, test_case):
     """
     Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
 
@@ -32,15 +32,15 @@ def write_test(db_instance, n_records, index, n_threads):
 
     data = DroneData()
 
-    multiplier = index * (int(n_records) / int(n_threads))
-
     # print("The amount of records in the before test database is: " +
     #       str(db_instance.count_records()))
     # print("Starting write test for " + str(n_records) + " records")
 
     for i in range(0, int(int(n_records) / int(n_threads))):
         data.new_update()
-        db_instance.write(data, i + int(multiplier))
+        db_instance.write(data)
+
+    get_resultaat(db_instance, n_threads, start_time, test_case)
 
     return
 
@@ -65,6 +65,28 @@ def write_result(database_type, n_records, duration):
 
     with open('result ' + str(database_type) + '.json', 'a') as outfile:
         json.dump(result, outfile)
+
+
+voltooide_threads = 0
+
+
+def get_resultaat(db_instance, n_threads, start_time, test_case):
+
+    database_type = sys.argv[1]
+    n_records = sys.argv[3]
+
+    global voltooide_threads
+
+    voltooide_threads += 1
+
+    if voltooide_threads == int(n_threads):
+        end_time = int(round(time.time() * 1000))
+        duration = end_time - start_time
+        print("Total write time of test case number " +
+              str(test_case) + ': ' + str(duration) + "ms")
+        db_instance.empty()
+
+        write_result(database_type, n_records, duration)
 
 
 def main():
@@ -102,15 +124,8 @@ def main():
             start_time = int(round(time.time() * 1000))
             for index in range(int(n_threads)):
                 x = threading.Thread(target=write_test, args=(
-                    db_instance, n_records, index, n_threads))
+                    db_instance, n_records, n_threads, start_time, test_case))
                 x.start()
-                x.join()
-            end_time = int(round(time.time() * 1000))
-            duration = end_time - start_time
-            print("Total write time of test case number " +
-                  str(test_case) + ': ' + str(duration) + "ms")
-            db_instance.empty()
-            write_result(database_type, n_records, duration)
 
     elif test_type == "read":
         read_test(db_instance)
