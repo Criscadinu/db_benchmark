@@ -22,7 +22,7 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def write_test(db_instance, n_records, n_threads, start_time, test_case):
+def write_test(db_instance, n_records, test_case):
     """
     Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
 
@@ -36,33 +36,40 @@ def write_test(db_instance, n_records, n_threads, start_time, test_case):
     #       str(db_instance.count_records()))
     # print("Starting write test for " + str(n_records) + " records")
 
-    for i in range(0, int(int(n_records) / int(n_threads))):
+    start_time = int(round(time.time() * 1000))
+
+    for i in range(0, int(n_records)):
         data.new_update()
         db_instance.write(data)
 
-    get_resultaat(db_instance, n_threads, start_time, test_case)
+    end_time = int(round(time.time() * 1000))
+    duration = end_time - start_time
+    print("Total write time of test case number " +
+          str(test_case) + ': ' + str(duration) + "ms")
+    db_instance.empty()
+    write_result(str(db_instance), n_records, duration)
 
     return
 
 
-def read_test(db_instance, n_records, n_threads, start_time, test_case):
-    """
-    Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
+# def read_test(db_instance, n_records, n_threads, start_time, test_case):
+#     """
+#     Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
 
-    :param db_instance: het database object van de database die getest wordt
-    :return:
-    """
+#     :param db_instance: het database object van de database die getest wordt
+#     :return:
+#     """
 
-    # print("The amount of records in the before test database is: " +
-    #       str(db_instance.count_records()))
-    # print("Starting write test for " + str(n_records) + " records")
+#     # print("The amount of records in the before test database is: " +
+#     #       str(db_instance.count_records()))
+#     # print("Starting write test for " + str(n_records) + " records")
 
-    for i in range(0, int(int(n_records) / int(n_threads))):
-        db_instance.read(int(n_records))
+#     for i in range(0, int(int(n_records) / int(n_threads))):
+#         db_instance.read(int(n_records))
 
-    get_resultaat(db_instance, n_threads, start_time, test_case)
+#     get_resultaat(db_instance, n_threads, start_time, test_case)
 
-    return
+#     return
 
 
 def write_result(database_type, n_records, duration):
@@ -79,25 +86,6 @@ def write_result(database_type, n_records, duration):
 voltooide_threads = 0
 
 
-def get_resultaat(db_instance, n_threads, start_time, test_case):
-
-    database_type = sys.argv[1]
-    n_records = sys.argv[3]
-
-    global voltooide_threads
-
-    voltooide_threads += 1
-
-    if voltooide_threads == int(n_threads):
-        end_time = int(round(time.time() * 1000))
-        duration = end_time - start_time
-        print("Total write time of test case number " +
-              str(test_case) + ': ' + str(duration) + "ms")
-        db_instance.empty()
-
-        write_result(database_type, n_records, duration)
-
-
 def main():
     """
     main methode. Verwacht dat via de command line de volgende argumenten zijn gegeven:
@@ -112,14 +100,13 @@ def main():
     :return: niks
     """
 
-    if len(sys.argv) is not 5:
+    if len(sys.argv) is not 4:
         print("Must specify database name, test type and number of records: <database> <type> <number of records> <number of threads> <test case>")
         exit(1)
 
     database_type = sys.argv[1]
     test_type = sys.argv[2]
     n_records = sys.argv[3]
-    n_threads = sys.argv[4]
 
     db_instance = get_database_instance(database_type)
     if db_instance is None:
@@ -130,14 +117,10 @@ def main():
 
     if test_type == "write":
         for test_case in range(1, 6):
-            start_time = int(round(time.time() * 1000))
-            for index in range(int(n_threads)):
-                x = threading.Thread(target=write_test, args=(
-                    db_instance, n_records, n_threads, start_time, test_case))
-                x.start()
-
+            write_test(db_instance, n_records, test_case)
     elif test_type == "read":
-        read_test(db_instance)
+        print('read test')
+        # read_test(db_instance)
     else:
         print("unknown test type: " + test_type)
         exit(1)
