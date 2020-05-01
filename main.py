@@ -22,7 +22,7 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def write_test(db_instance, n_records, test_case):
+def write_test(database_type, db_instance, n_records, test_case):
     """
     Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
 
@@ -47,7 +47,7 @@ def write_test(db_instance, n_records, test_case):
     print("Total write time of test case number " +
           str(test_case) + ': ' + str(duration) + "ms")
     db_instance.empty()
-    write_result(str(db_instance), n_records, duration)
+    write_result(database_type, n_records, duration)
 
     return
 
@@ -117,7 +117,7 @@ def main():
 
     if test_type == "write":
         for test_case in range(1, 6):
-            write_test(db_instance, n_records, test_case)
+            write_test(database_type, db_instance, n_records, test_case)
     elif test_type == "read":
         print('read test')
         # read_test(db_instance)
