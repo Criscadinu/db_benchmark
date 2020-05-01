@@ -5,6 +5,7 @@ import threading
 import time
 import sys
 import json
+import os
 
 
 def get_database_instance(db_name):
@@ -22,7 +23,7 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def write_test(database_type, db_instance, n_records, test_case):
+def write_test(database_type, db_instance, n_records, test_case, result_set, file_name):
     """
     Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
 
@@ -37,6 +38,7 @@ def write_test(database_type, db_instance, n_records, test_case):
     # print("Starting write test for " + str(n_records) + " records")
 
     start_time = int(round(time.time() * 1000))
+    result = {}
 
     for i in range(0, int(n_records)):
         data.new_update()
@@ -47,7 +49,15 @@ def write_test(database_type, db_instance, n_records, test_case):
     print("Total write time of test case number " +
           str(test_case) + ': ' + str(duration) + "ms")
     db_instance.empty()
-    write_result(database_type, n_records, duration)
+
+    result_set[test_case] = duration
+    result[n_records] = []
+    result[n_records].append(result_set)
+
+    if test_case == 5:
+        write_to_json_file(result, file_name)
+
+    # write_result(database_type, n_records, result)
 
     return
 
@@ -72,18 +82,30 @@ def write_test(database_type, db_instance, n_records, test_case):
 #     return
 
 
-def write_result(database_type, n_records, duration):
-    result = {}
-    result[database_type] = []
-    result[database_type].append({
-        n_records: duration
-    })
-
-    with open('result ' + str(database_type) + '.json', 'a') as outfile:
-        json.dump(result, outfile)
+def is_json_file(file_name):
+    return os.path.exists(file_name)
 
 
-voltooide_threads = 0
+def create_json_file(file_name):
+    if is_json_file(file_name):
+        pass
+    else:
+        data = {}
+        data['tests'] = []
+        with open(file_name, 'w') as outfile:
+            json.dump(data, outfile)
+
+
+def write_to_json_file(result, filename):
+
+    with open(filename) as json_file:
+        data = json.load(json_file)
+        temp = data["tests"]
+
+        temp.append(result)
+
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=4)
 
 
 def main():
@@ -107,6 +129,7 @@ def main():
     database_type = sys.argv[1]
     test_type = sys.argv[2]
     n_records = sys.argv[3]
+    result_set = {}
 
     db_instance = get_database_instance(database_type)
     if db_instance is None:
@@ -115,9 +138,14 @@ def main():
 
     db_instance.connect("127.0.0.1", "benchmark")
 
+    file_name = 'result ' + str(database_type) + '.json'
+
+    create_json_file(file_name)
+
     if test_type == "write":
         for test_case in range(1, 6):
-            write_test(database_type, db_instance, n_records, test_case)
+            write_test(database_type, db_instance,
+                       n_records, test_case, result_set, file_name)
     elif test_type == "read":
         print('read test')
         # read_test(db_instance)
