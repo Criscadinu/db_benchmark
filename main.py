@@ -45,14 +45,23 @@ def write_test(db_instance, n_records, n_threads, start_time, test_case):
     return
 
 
-def read_test(db_instance):
+def read_test(db_instance, n_records, n_threads, start_time, test_case):
     """
     Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
 
     :param db_instance: het database object van de database die getest wordt
     :return:
     """
-    print("Read test not implemented yet")
+
+    # print("The amount of records in the before test database is: " +
+    #       str(db_instance.count_records()))
+    # print("Starting write test for " + str(n_records) + " records")
+
+    for i in range(0, int(int(n_records) / int(n_threads))):
+        db_instance.read(int(n_records))
+
+    get_resultaat(db_instance, n_threads, start_time, test_case)
+
     return
 
 
