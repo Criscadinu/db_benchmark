@@ -44,6 +44,7 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
     duration = end_time - start_time
     print("Total write time of test case number " +
           str(test_case) + ': ' + str(duration) + "ms")
+    print("Cleanup! Removing inserted records from database..")
     db_instance.empty()
 
     result_set[test_case] = duration
@@ -117,10 +118,6 @@ def main():
     :return: niks
     """
 
-    if len(sys.argv) is not 4:
-        print("Must specify database name, test type and number of records: <database> <type> <number of records> <number of threads> <test case>")
-        exit(1)
-
     database_type = sys.argv[1]
     test_type = sys.argv[2]
     n_records = sys.argv[3]
@@ -150,5 +147,9 @@ def main():
 
     exit(0)
 
+
+if len(sys.argv) is not 4:
+    print("Must specify database name, test type and number of records: <database> <type> <number of records> <number of threads> <test case>")
+    exit(1)
 
 main()
