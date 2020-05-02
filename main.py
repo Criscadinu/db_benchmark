@@ -1,4 +1,4 @@
-from Databases import *
+from databases.Databases import *
 from DroneData import *
 import concurrent.futures
 import threading
@@ -33,10 +33,6 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
 
     data = DroneData()
 
-    # print("The amount of records in the before test database is: " +
-    #       str(db_instance.count_records()))
-    # print("Starting write test for " + str(n_records) + " records")
-
     start_time = int(round(time.time() * 1000))
     result = {}
 
@@ -57,7 +53,6 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
     if test_case == 5:
         write_to_json_file(result, file_name)
 
-    # write_result(database_type, n_records, result)
 
     return
 
@@ -138,7 +133,7 @@ def main():
 
     db_instance.connect("127.0.0.1", "benchmark")
 
-    file_name = 'result ' + str(database_type) + '.json'
+    file_name = 'result_' + str(database_type) + '.json'
 
     create_json_file(file_name)
 
