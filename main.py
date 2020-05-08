@@ -33,19 +33,23 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
 
     data = DroneData()
 
-    start_time = int(round(time.time() * 1000))
     result = {}
+
+    ###############HOLY BLOCK DONT TOUCH######################
+    start_time = int(round(time.time() * 1000))
 
     for i in range(0, int(n_records)):
         data.new_update()
         db_instance.write(data)
 
     end_time = int(round(time.time() * 1000))
+    ##########################################################
+
     duration = end_time - start_time
     print("Total write time of test case number " +
           str(test_case) + ': ' + str(duration) + "ms")
     print("Cleanup! Removing inserted records from database..")
-    db_instance.empty()
+#    db_instance.empty()
     result_set[test_case] = duration
     result[n_records] = []
     result[n_records].append(result_set)
@@ -65,12 +69,16 @@ def read_test(database_type, db_instance, n_records, test_case, result_set, file
 #     :return:
 #     """
 
-    start_time = int(round(time.time() * 1000))
     result = {}
+    
+    ###############HOLY BLOCK DONT TOUCH######################
+    start_time = int(round(time.time() * 1000))
 
-    db_instance.read(n_records)
+    print(db_instance.read(int(n_records)).count())
 
     end_time = int(round(time.time() * 1000))
+    ##########################################################
+
     duration = end_time - start_time
 
     result_set[test_case] = duration
