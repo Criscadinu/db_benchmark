@@ -46,7 +46,6 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
           str(test_case) + ': ' + str(duration) + "ms")
     print("Cleanup! Removing inserted records from database..")
     db_instance.empty()
-
     result_set[test_case] = duration
     result[n_records] = []
     result[n_records].append(result_set)
@@ -58,7 +57,7 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
     return
 
 
- def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
+def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
 #     """
 #     Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
 
@@ -80,7 +79,7 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
 
     if test_case == 5:
         write_to_json_file(result, file_name)
-     return
+    return
 
 
 def is_json_file(file_name):
@@ -133,7 +132,7 @@ def main():
         print("Unknown database type: " + database_type)
         exit(1)
 
-    db_instance.connect("127.0.0.1", "benchmark")
+    db_instance.connect("127.0.0.1")
 
     file_name = 'result_' + str(database_type) + '.json'
     read_file_name = 'read_result_' + str(database_type) + '.json'
@@ -146,11 +145,9 @@ def main():
             write_test(database_type, db_instance,
                        n_records, test_case, result_set, file_name)
     elif test_type == "read":
-        print('read test')
         for test_case in range(1, 6):
             read_test(database_type, db_instance,
                        n_records, test_case, result_set, file_name)
-        # read_test(db_instance)
     else:
         print("unknown test type: " + test_type)
         exit(1)
@@ -159,7 +156,7 @@ def main():
 
 
 if len(sys.argv) is not 4:
-    print("Must specify database name, test type and number of records: <database> <type> <number of records> <number of threads> <test case>")
+    print("Must specify database name, test type and number of records: <database> <type> <number of records>")
     exit(1)
 
 main()

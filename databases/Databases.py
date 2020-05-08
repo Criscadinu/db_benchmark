@@ -3,6 +3,7 @@ import datetime
 import mysql.connector as mariadb
 from pymongo import MongoClient
 from bson import DBRef
+import happybase
 from DroneData import *
 import redis
 
@@ -15,7 +16,7 @@ class Database(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def connect(self, ipv4, database_name):
+    def connect(self, ipv4):
         """
         Abstracte methode om verbinding te maken met de database
         :param ipv4: IP adres van de host van de database
@@ -66,7 +67,7 @@ class SQL(Database):
 
     def connect(self, ipv4, database_name):
         self.connection = mariadb.connect(host=ipv4, port=3306, user='root', password='test123',
-                                          database=database_name)
+                                          database="paris")
         self.cursor = self.connection.cursor()
 
     def write(self, drone_update):
@@ -102,9 +103,9 @@ class MongoDB(Database):
         self.db = None
         self.uitvoering_col = None
 
-    def connect(self, ipv4, database_name):
+    def connect(self, ipv4):
         self.client = MongoClient(ipv4, 27017)
-        self.db = self.client[database_name]
+        self.db = self.client['paris']
         self.uitvoering_col = self.db["uitvoering"]
 
     def write(self, drone_update):
@@ -133,7 +134,7 @@ class Redis(Database):
     def __init__(self):
         self.connection = None
 
-    def connect(self, ipv4, database_name):
+    def connect(self, ipv4):
         self.connection = redis.Redis(host=ipv4, port=6379, db=0)
 
     def write(self, drone_update):
@@ -159,14 +160,15 @@ class Happybase(Database):
     def __init__(self):
         self.backlog_count_ = 0
         self.backlog_upper_bound_ = 20
+        self.conn = None
 
-    def connection(self):
-        conn = happybase.Connection(host=host)
+    def connect(self, host, db):
+        self.conn = happybase.Connection(host=host)
         conn.open()
         return conn
 
     def write(self, drone_update):
-        self.table = connection.table('PARIS')
+        self.table = self.conn.table('PARIS')
         self.batch = table.batch()
         self.batch.put(datetime.datetime, {'drone:id':  drone_update.drone_id, 'drone_lat': drone_update.drone_lat,
                                            'drone_long': drone_update.drone_long, 'batterij_duur': drone_update.batterij_duur})
