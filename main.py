@@ -18,47 +18,33 @@ def get_database_instance(db_name):
         "sql": SQL(),
         "mongodb": MongoDB(),
         "redis": Redis(),
-        "hbase": Happybase(),
+        "monetdb": Monetdb(),
     }
     return switcher.get(db_name, None)
 
 
-def write_test(database_type, db_instance, n_records, test_case, result_set, file_name):
-    """
-    Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
+def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
+    #     """
+    #     Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
 
-    :param db_instance: het database object van de database die getest wordt
-    :return: Niks
-    """
-
-    data = DroneData()
-
+    #     :param db_instance: het database object van de database die getest wordt
+    #     :return:
+    #     """
+    start_time = int(round(time.time() * 1000))
     result = {}
 
-    ###############HOLY BLOCK DONT TOUCH######################
-    start_time = int(round(time.time() * 1000))
-
-    for i in range(0, int(n_records)):
-        data.new_update()
-        db_instance.write(data)
+    db_instance.read(n_records)
 
     end_time = int(round(time.time() * 1000))
-    ##########################################################
-
     duration = end_time - start_time
-    print("Total write time of test case number " +
-          str(test_case) + ': ' + str(duration) + "ms")
-    print("Cleanup! Removing inserted records from database..")
-#    db_instance.empty()
+
     result_set[test_case] = duration
     result[n_records] = []
     result[n_records].append(result_set)
-
     if test_case == 5:
         write_to_json_file(result, file_name)
-
-
     return
+
 
 
 def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
@@ -70,7 +56,7 @@ def read_test(database_type, db_instance, n_records, test_case, result_set, file
 #     """
 
     result = {}
-    
+
     ###############HOLY BLOCK DONT TOUCH######################
     start_time = int(round(time.time() * 1000))
 
@@ -155,7 +141,7 @@ def main():
     elif test_type == "read":
         for test_case in range(1, 6):
             read_test(database_type, db_instance,
-                       n_records, test_case, result_set, file_name)
+                      n_records, test_case, result_set, read_file_name)
     else:
         print("unknown test type: " + test_type)
         exit(1)
