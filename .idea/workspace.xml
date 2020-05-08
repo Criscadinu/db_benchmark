@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2b41beba-6c56-42d3-8f8d-7b2bec7bb506" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,6 +89,8 @@
       <workItem from="1587543179011" duration="7000" />
       <workItem from="1587798496568" duration="2111000" />
       <workItem from="1587890726740" duration="7434000" />
+      <workItem from="1588327726389" duration="1298000" />
+      <workItem from="1588760024157" duration="4538000" />
     </task>
     <servers />
   </component>
@@ -95,14 +98,27 @@
     <option name="version" value="2" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="328" y="87" key="#Project_Structure" timestamp="1587464931018">
-      <screen x="0" y="23" width="1680" height="966" />
+    <state x="500" y="-987" key="#Project_Structure" timestamp="1588945492009">
+      <screen x="0" y="-1057" width="2560" height="1057" />
     </state>
     <state x="328" y="87" key="#Project_Structure/0.-1057.2560.1057/0.23.1680.966@0.23.1680.966" timestamp="1587464931018" />
+    <state x="500" y="-987" key="#Project_Structure/0.-1057.2560.1057/0.23.1920.1113@0.-1057.2560.1057" timestamp="1588945492009" />
+    <state x="648" y="-786" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1588759833620">
+      <screen x="0" y="-1057" width="2560" height="1057" />
+    </state>
+    <state x="648" y="-786" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.-1057.2560.1057/0.23.1680.963@0.-1057.2560.1057" timestamp="1588759833620" />
     <state x="341" y="145" key="SettingsEditor" timestamp="1587464970595">
       <screen x="0" y="23" width="1680" height="966" />
     </state>
     <state x="341" y="145" key="SettingsEditor/0.-1057.2560.1057/0.23.1680.966@0.23.1680.966" timestamp="1587464970595" />
+    <state x="748" y="-612" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588945625934">
+      <screen x="0" y="-1057" width="2560" height="1057" />
+    </state>
+    <state x="748" y="-612" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.-1057.2560.1057/0.23.1920.1113@0.-1057.2560.1057" timestamp="1588945625934" />
+    <state x="662" y="-790" width="596" height="522" key="find.popup" timestamp="1588765082283">
+      <screen x="0" y="-1057" width="2560" height="1057" />
+    </state>
+    <state x="662" y="-790" width="596" height="522" key="find.popup/0.-1057.2560.1057/0.23.1680.963@0.-1057.2560.1057" timestamp="1588765082283" />
     <state x="214" y="108" key="new project wizard" timestamp="1587890046789">
       <screen x="0" y="23" width="1680" height="963" />
     </state>

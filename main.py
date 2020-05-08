@@ -58,7 +58,7 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
     return
 
 
-# def read_test(db_instance, n_records, n_threads, start_time, test_case):
+ def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
 #     """
 #     Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
 
@@ -66,16 +66,21 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
 #     :return:
 #     """
 
-#     # print("The amount of records in the before test database is: " +
-#     #       str(db_instance.count_records()))
-#     # print("Starting write test for " + str(n_records) + " records")
+    start_time = int(round(time.time() * 1000))
+    result = {}
 
-#     for i in range(0, int(int(n_records) / int(n_threads))):
-#         db_instance.read(int(n_records))
+    db_instance.read(n_records)
 
-#     get_resultaat(db_instance, n_threads, start_time, test_case)
+    end_time = int(round(time.time() * 1000))
+    duration = end_time - start_time
 
-#     return
+    result_set[test_case] = duration
+    result[n_records] = []
+    result[n_records].append(result_set)
+
+    if test_case == 5:
+        write_to_json_file(result, file_name)
+     return
 
 
 def is_json_file(file_name):
@@ -131,8 +136,10 @@ def main():
     db_instance.connect("127.0.0.1", "benchmark")
 
     file_name = 'result_' + str(database_type) + '.json'
+    read_file_name = 'read_result_' + str(database_type) + '.json'
 
     create_json_file(file_name)
+    create_json_file(read_file_name)
 
     if test_type == "write":
         for test_case in range(1, 6):
@@ -140,6 +147,9 @@ def main():
                        n_records, test_case, result_set, file_name)
     elif test_type == "read":
         print('read test')
+        for test_case in range(1, 6):
+            read_test(database_type, db_instance,
+                       n_records, test_case, result_set, file_name)
         # read_test(db_instance)
     else:
         print("unknown test type: " + test_type)
