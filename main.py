@@ -23,28 +23,41 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
-    #     """
-    #     Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
+def write_test(database_type, db_instance, n_records, test_case, result_set, file_name):
+    """
+    Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
+    :param db_instance: het database object van de database die getest wordt
+    :return: Niks
+    """
 
-    #     :param db_instance: het database object van de database die getest wordt
-    #     :return:
-    #     """
-    start_time = int(round(time.time() * 1000))
+    data = DroneData()
+
     result = {}
 
-    db_instance.read(n_records)
+    ###############HOLY BLOCK DONT TOUCH######################
+    start_time = int(round(time.time() * 1000))
+
+    for i in range(0, int(n_records)):
+        data.new_update()
+        db_instance.write(data)
 
     end_time = int(round(time.time() * 1000))
-    duration = end_time - start_time
+    ##########################################################
 
+    duration = end_time - start_time
+    print("Total write time of test case number " +
+          str(test_case) + ': ' + str(duration) + "ms")
+    print("Cleanup! Removing inserted records from database..")
+#    db_instance.empty()
     result_set[test_case] = duration
     result[n_records] = []
     result[n_records].append(result_set)
+
     if test_case == 5:
         write_to_json_file(result, file_name)
-    return
 
+
+    return
 
 
 def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
@@ -58,15 +71,16 @@ def read_test(database_type, db_instance, n_records, test_case, result_set, file
     result = {}
 
     ###############HOLY BLOCK DONT TOUCH######################
-    start_time = int(round(time.time() * 1000))
-
+    start_time = datetime.datetime.now()
     db_instance.read(int(n_records))
 
-    end_time = int(round(time.time() * 1000))
+    end_time = datetime.datetime.now()
     ##########################################################
 
     duration = end_time - start_time
-    result_set[test_case] = duration
+    print("Total write time of test case number " +
+          str(test_case) + ': ' + str(duration.microseconds) + "us")
+    result_set[test_case] = duration.microseconds
     result[n_records] = []
     result[n_records].append(result_set)
     if test_case == 5:
