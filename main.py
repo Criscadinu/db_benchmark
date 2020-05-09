@@ -60,17 +60,15 @@ def read_test(database_type, db_instance, n_records, test_case, result_set, file
     ###############HOLY BLOCK DONT TOUCH######################
     start_time = int(round(time.time() * 1000))
 
-    print(db_instance.read(int(n_records)).count())
+    db_instance.read(int(n_records))
 
     end_time = int(round(time.time() * 1000))
     ##########################################################
 
     duration = end_time - start_time
-
     result_set[test_case] = duration
     result[n_records] = []
     result[n_records].append(result_set)
-
     if test_case == 5:
         write_to_json_file(result, file_name)
     return

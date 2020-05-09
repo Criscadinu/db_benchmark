@@ -3,7 +3,6 @@ import datetime
 import mysql.connector as mariadb
 from pymongo import MongoClient
 from bson import DBRef
-import happybase
 from DroneData import *
 import redis
 
@@ -156,22 +155,41 @@ class Redis(Database):
         return self.connection.dbsize()
 
 
-class Happybase(Database):
-    def __init__(self):
-        self.backlog_count_ = 0
-        self.backlog_upper_bound_ = 20
-        self.conn = None
+#class Happybase(Database):
+#    def __init__(self):
+#        self.backlog_count_ = 0
+#        self.backlog_upper_bound_ = 20
+#        self.conn = None
+#
+#    def connect(self, host, db):
+#        self.conn = happybase.Connection(host=host)
+#        conn.open()
+#        return conn
+#
+#    def write(self, drone_update):
+#        self.table = self.conn.table('PARIS')
+#        self.batch = table.batch()
+#        self.batch.put(datetime.datetime, {'drone:id':  drone_update.drone_id, 'drone_lat': drone_update.drone_lat,
+#                                           'drone_long': drone_update.drone_long, 'batterij_duur': drone_update.batterij_duur})
+#        self.batch.delete(b'row-key-4')
+#        self.batch.send()
+#        return
 
-    def connect(self, host, db):
-        self.conn = happybase.Connection(host=host)
-        conn.open()
-        return conn
+class Monetdb(Database):
+    def __init__(self):
+        self.connection = None
+
+    def connect(self,  ipv4,  database_name):
+        self.connection = pymonetdb.connect(username="monetdb", password="monetdb", hostname="localhost", database="paris")
+
 
     def write(self, drone_update):
-        self.table = self.conn.table('PARIS')
-        self.batch = table.batch()
-        self.batch.put(datetime.datetime, {'drone:id':  drone_update.drone_id, 'drone_lat': drone_update.drone_lat,
-                                           'drone_long': drone_update.drone_long, 'batterij_duur': drone_update.batterij_duur})
-        self.batch.delete(b'row-key-4')
-        self.batch.send()
+        self.connection.execute("INSERT INTO UITVOERING VALUES(0,1,CURRENT_TIMESTAMP,0.23,3.534,'pathHDB', 'pathWB', 88)")
+
+        self.connection.commit()
         return
+    def read(self, n_records):
+        self.connection.execute("select * from UITVOERING LIMIT" + n_records)
+        print(self.connection.execute("select * from UITVOERING LIMIT" + n_records) )
+        return
+
