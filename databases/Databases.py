@@ -151,11 +151,17 @@ class Redis(Database):
     def empty(self):
         self.connection.flushall()
 
+    def read(self, aantal_records):
+        pipe = self.connection.pipeline()
+        keys = self.connection.keys('*')
+        for key in keys[0:aantal_records-1]:
+            pipe.hgetall(key)
+
     def count_records(self):
         return self.connection.dbsize()
 
 
-#class Happybase(Database):
+# class Happybase(Database):
 #    def __init__(self):
 #        self.backlog_count_ = 0
 #        self.backlog_upper_bound_ = 20
@@ -180,16 +186,18 @@ class Monetdb(Database):
         self.connection = None
 
     def connect(self,  ipv4,  database_name):
-        self.connection = pymonetdb.connect(username="monetdb", password="monetdb", hostname="localhost", database="paris")
-
+        self.connection = pymonetdb.connect(
+            username="monetdb", password="monetdb", hostname="localhost", database="paris")
 
     def write(self, drone_update):
-        self.connection.execute("INSERT INTO UITVOERING VALUES(0,1,CURRENT_TIMESTAMP,0.23,3.534,'pathHDB', 'pathWB', 88)")
+        self.connection.execute(
+            "INSERT INTO UITVOERING VALUES(0,1,CURRENT_TIMESTAMP,0.23,3.534,'pathHDB', 'pathWB', 88)")
 
         self.connection.commit()
         return
+
     def read(self, n_records):
         self.connection.execute("select * from UITVOERING LIMIT" + n_records)
-        print(self.connection.execute("select * from UITVOERING LIMIT" + n_records) )
+        print(self.connection.execute(
+            "select * from UITVOERING LIMIT" + n_records))
         return
-
