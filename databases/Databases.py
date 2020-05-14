@@ -82,8 +82,7 @@ class SQL(Database):
 
     def read(self, aantal_records):
         self.cursor.execute("select * from UITVOERING LIMIT " + str(aantal_records))
-        self.cursor.fetchall()
-        return self.cursor.rowcount
+        return self.cursor.fetchall()
 
     def empty(self):
         self.cursor.execute("delete from UITVOERING")
@@ -119,7 +118,9 @@ class MongoDB(Database):
         return
 
     def read(self, aantal_records):
-        return self.uitvoering_col.find().limit(aantal_records)
+        for i in self.uitvoering_col.find().limit(aantal_records):
+            pass
+        return 
 
     def empty(self):
         self.uitvoering_col.drop()
@@ -132,9 +133,13 @@ class MongoDB(Database):
 class Redis(Database):
     def __init__(self):
         self.connection = None
+        self.pipe = None
+        self.keys = None
 
     def connect(self, ipv4):
-        self.connection = redis.Redis(host=ipv4, port=6379, db=0)
+        self.connection = redis.StrictRedis(host=ipv4, port=6379, db=0, decode_responses=True)
+        self.pipe = self.connection.pipeline()
+#        self.keys = self.connection.keys('*')
 
     def write(self, drone_update):
         uitvoering = {
@@ -152,10 +157,12 @@ class Redis(Database):
         self.connection.flushall()
 
     def read(self, aantal_records):
-        pipe = self.connection.pipeline()
-        keys = self.connection.keys('*')
-        for key in keys[0:aantal_records-1]:
-            pipe.hgetall(key)
+        i = 0
+        for key in self.connection.scan_iter():
+            self.pipe.hgetall(key)
+            i = i + 1
+            if aantal_records == i: break
+        self.pipe.execute()
 
     def count_records(self):
         return self.connection.dbsize()
@@ -209,7 +216,6 @@ class Monetdb(Database):
         self.connection.commit()
         return
 
-    def read(self, n_records):
-        self.cursor.execute("select * from UITVOERING LIMIT" + str(n_records))
-        self.cursor.fetchall()
-        return self.cursor.rowcount
+    def read(self, aantal_records):
+        self.cursor.execute("select * from UITVOERING LIMIT " + str(aantal_records))
+        return self.cursor.fetchall()

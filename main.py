@@ -71,16 +71,17 @@ def read_test(database_type, db_instance, n_records, test_case, result_set, file
     result = {}
 
     ###############HOLY BLOCK DONT TOUCH######################
-    start_time = datetime.datetime.now()
-    db_instance.read(int(n_records))
-
-    end_time = datetime.datetime.now()
+    start_time = int(round(time.time() * 1000))
+    #start_time = datetime.datetime.now()
+    print(db_instance.read(int(n_records)))
+    #end_time = datetime.datetime.now()
+    end_time = int(round(time.time() * 1000))
     ##########################################################
 
     duration = end_time - start_time
     print("Total read time of test case number " +
-          str(test_case) + ': ' + str(duration.microseconds) + "us")
-    result_set[test_case] = duration.microseconds
+          str(test_case) + ': ' + str(duration) + "ms")
+    result_set[test_case] = duration
     result[n_records] = []
     result[n_records].append(result_set)
     if test_case == 5:
@@ -146,7 +147,6 @@ def main():
 
     create_json_file(file_name)
     create_json_file(read_file_name)
-
     if test_type == "write":
         for test_case in range(1, 6):
             write_test(database_type, db_instance,
