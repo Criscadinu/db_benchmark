@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from bson import DBRef
 from DroneData import *
 import redis
-
+import pymonetdb
 
 class Database(object):
     """
@@ -64,13 +64,12 @@ class SQL(Database):
         self.connection = None
         self.cursor = None
 
-    def connect(self, ipv4, database_name):
-        self.connection = mariadb.connect(host=ipv4, port=3306, user='root', password='test123',
-                                          database="paris")
+    def connect(self, ipv4):
+        self.connection = mariadb.connect(host=ipv4, port=3306, user='test', password='test123', database="paris")
         self.cursor = self.connection.cursor()
 
     def write(self, drone_update):
-        self.cursor.execute("insert into UITVOERING values (%s, %s, FROM_UNIXTIME(%s * 0.001), %s, %s, NULL, NULL, %s)",
+        self.cursor.execute("insert into UITVOERING values (%s, %s, FROM_UNIXTIME(%s), %s, %s, NULL, NULL, %s)",
                             (drone_update.uitvoering_id,
                              drone_update.drone_id,
                              drone_update.timestamp,
@@ -82,12 +81,13 @@ class SQL(Database):
         return
 
     def read(self, aantal_records):
-        self.cursor.execute(
-            "select * from UITVOERING LIMIT " + str(aantal_records))
-        return self.cursor
+        self.cursor.execute("select * from UITVOERING LIMIT " + str(aantal_records))
+        self.cursor.fetchall()
+        return self.cursor.rowcount
 
     def empty(self):
         self.cursor.execute("delete from UITVOERING")
+        self.connection.commit()
         return
 
     def count_records(self):
@@ -184,20 +184,32 @@ class Redis(Database):
 class Monetdb(Database):
     def __init__(self):
         self.connection = None
+        self.cursor = None
 
-    def connect(self,  ipv4,  database_name):
+    def connect(self,  ipv4):
         self.connection = pymonetdb.connect(
             username="monetdb", password="monetdb", hostname="localhost", database="paris")
+        self.cursor = self.connection.cursor()
 
     def write(self, drone_update):
-        self.connection.execute(
-            "INSERT INTO UITVOERING VALUES(0,1,CURRENT_TIMESTAMP,0.23,3.534,'pathHDB', 'pathWB', 88)")
+        self.cursor.execute("insert into UITVOERING values (%s, %s, sys.epoch(%s), %s, %s, NULL, NULL, %s)" %
+                            (drone_update.uitvoering_id,
+                             drone_update.drone_id,
+                             drone_update.timestamp,
+                             drone_update.drone_lat,
+                             drone_update.drone_long,
+                             drone_update.batterij_duur
+                             ))
 
         self.connection.commit()
         return
 
-    def read(self, n_records):
-        self.connection.execute("select * from UITVOERING LIMIT" + n_records)
-        print(self.connection.execute(
-            "select * from UITVOERING LIMIT" + n_records))
+    def empty(self):
+        self.cursor.execute("delete from UITVOERING")
+        self.connection.commit()
         return
+
+    def read(self, n_records):
+        self.cursor.execute("select * from UITVOERING LIMIT" + str(n_records))
+        self.cursor.fetchall()
+        return self.cursor.rowcount

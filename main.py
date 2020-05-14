@@ -8,6 +8,7 @@ import json
 import os
 
 
+
 def get_database_instance(db_name):
     """
     Methode om het correcte database object te instantiëren
@@ -23,14 +24,13 @@ def get_database_instance(db_name):
     return switcher.get(db_name, None)
 
 
-def write_test(database_type, db_instance, n_records, test_case, result_set, file_name):
+def write_test(database_type, db_instance, n_records, test_case, result_set, file_name, data):
     """
     Methode die de write test initialiseert. Momenteel is dit nog een voorbeeld implementatie!!
     :param db_instance: het database object van de database die getest wordt
     :return: Niks
     """
 
-    data = DroneData()
 
     result = {}
 
@@ -78,7 +78,7 @@ def read_test(database_type, db_instance, n_records, test_case, result_set, file
     ##########################################################
 
     duration = end_time - start_time
-    print("Total write time of test case number " +
+    print("Total read time of test case number " +
           str(test_case) + ': ' + str(duration.microseconds) + "us")
     result_set[test_case] = duration.microseconds
     result[n_records] = []
@@ -140,6 +140,7 @@ def main():
 
     db_instance.connect("127.0.0.1")
 
+    data = DroneData()
     file_name = 'result_' + str(database_type) + '.json'
     read_file_name = 'read_result_' + str(database_type) + '.json'
 
@@ -149,7 +150,7 @@ def main():
     if test_type == "write":
         for test_case in range(1, 6):
             write_test(database_type, db_instance,
-                       n_records, test_case, result_set, file_name)
+                       n_records, test_case, result_set, file_name, data)
     elif test_type == "read":
         for test_case in range(1, 6):
             read_test(database_type, db_instance,
