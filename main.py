@@ -34,7 +34,7 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
 
     result = {}
 
-    ###############HOLY BLOCK DONT TOUCH######################
+    ###############CRUCIAL BLOCK DONT TOUCH######################
     start_time = int(round(time.time() * 1000))
 
     for i in range(0, int(n_records)):
@@ -61,29 +61,20 @@ def write_test(database_type, db_instance, n_records, test_case, result_set, fil
 
 
 def read_test(database_type, db_instance, n_records, test_case, result_set, file_name):
-#     """
-#     Methode die de read test initialiseert. Momenteel nog geen voorbeeld implementatie!!
-
-#     :param db_instance: het database object van de database die getest wordt
-#     :return:
-#     """
-
     result = {}
 
-    ###############HOLY BLOCK DONT TOUCH######################
+    ###############CRUCIAL BLOCK DONT TOUCH######################
     start_time = int(round(time.time() * 1000))
-    #start_time = datetime.datetime.now()
-    print(db_instance.read(int(n_records)))
-    #end_time = datetime.datetime.now()
+    db_instance.read(n_records)
     end_time = int(round(time.time() * 1000))
     ##########################################################
 
     duration = end_time - start_time
-    print("Total read time of test case number " +
-          str(test_case) + ': ' + str(duration) + "ms")
+    print("Total read time of test case number " + str(test_case) + ': ' + str(duration) + "ms")
     result_set[test_case] = duration
     result[n_records] = []
     result[n_records].append(result_set)
+
     if test_case == 5:
         write_to_json_file(result, file_name)
     return
